@@ -1,0 +1,30 @@
+{% if downloads | length > 0 %}
+<h2>Downloads</h2>
+<table class="compact">
+    <thead>
+        <tr><th>Title</th><th>Status</th><th>Progress</th><th></th></tr>
+    </thead>
+    <tbody>
+    {% for d in downloads %}
+        {% set pct = 0 %}
+        {% if d.size_bytes > 0 %}{% set pct = (d.bytes_downloaded * 100 / d.size_bytes) | round | int %}{% endif %}
+        <tr>
+            <td><code>{{ d.final_name }}</code><br><small>{{ d.title }}</small></td>
+            <td><span class="status status-{{ d.status }}">{{ d.status }}</span></td>
+            <td>
+                <div class="bar"><div class="fill" style="width: {{ pct }}%"></div></div>
+                <small>{{ pct }}%</small>
+            </td>
+            <td>
+                {% if d.status == "running" %}
+                <form action="/complete" method="post">
+                    <input type="hidden" name="id" value="{{ d.id }}">
+                    <button class="ghost" type="submit">Done</button>
+                </form>
+                {% endif %}
+            </td>
+        </tr>
+    {% endfor %}
+    </tbody>
+</table>
+{% endif %}

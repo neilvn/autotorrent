@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+{% block title %}{{ query }} — autotorrent{% endblock %}
+{% block content %}
+<h1>Results for “{{ query }}”</h1>
+
+<form action="/search" method="post" class="search">
+    <input name="q" value="{{ query }}" required>
+    <select name="resolution">
+        <option value="any"{% if resolution == "any" %} selected{% endif %}>Any resolution</option>
+        <option value="720p"{% if resolution == "720p" %} selected{% endif %}>720p</option>
+        <option value="1080p"{% if resolution == "1080p" %} selected{% endif %}>1080p</option>
+        <option value="2160p"{% if resolution == "2160p" %} selected{% endif %}>2160p / 4K</option>
+    </select>
+    <button type="submit">Search</button>
+</form>
+
+{% if error %}
+<div class="error">{{ error }}</div>
+{% else %}
+<ul class="results">
+{% for r in results %}
+<li>
+    <div class="row">
+        <div class="info">
+            <div class="title">{{ r.display_title }}{% if r.year > 0 %} <span class="year">({{ r.year }})</span>{% endif %}</div>
+            <div class="meta">
+                <span class="badge">{{ r.quality }}</span>
+                <span>{{ (r.size_bytes / 1073741824) | round }} GB</span>
+                <span>↑{{ r.seeds }} ↓{{ r.leechers }}</span>
+            </div>
+        </div>
+        <form action="/download" method="post">
+            <input type="hidden" name="title" value="{{ r.display_title }}">
+            <input type="hidden" name="year" value="{{ r.year }}">
+            <input type="hidden" name="quality" value="{{ r.quality }}">
+            <input type="hidden" name="size_bytes" value="{{ r.size_bytes }}">
+            <input type="hidden" name="magnet" value="{{ r.magnet }}">
+            <button type="submit">Download</button>
+        </form>
+    </div>
+</li>
+{% endfor %}
+</ul>
+{% if results | length == 0 %}
+<p class="hint">No results at this resolution.</p>
+{% endif %}
+{% endif %}
+
+<a href="/" class="back">← new search</a>
+{% include "partial_downloads.html" %}
+{% endblock %}

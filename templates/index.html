@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+{% block content %}
+<h1>Search</h1>
+<form action="/search" method="post" class="search">
+    <input name="q" placeholder="movie title…" autofocus required>
+    <select name="resolution">
+        <option value="any">Any resolution</option>
+        <option value="720p">720p</option>
+        <option value="1080p">1080p</option>
+        <option value="2160p">2160p / 4K</option>
+    </select>
+    <button type="submit">Go</button>
+</form>
+
+{% include "partial_downloads.html" %}
+{% endblock %}

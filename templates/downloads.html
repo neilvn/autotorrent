@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+{% block title %}Downloads — autotorrent{% endblock %}
+{% block content %}
+<h1>Downloads</h1>
+
+{% if downloads | length == 0 %}
+<p>Nothing yet. <a href="/">Search</a> something.</p>
+{% else %}
+<table>
+    <thead>
+        <tr>
+            <th>Title</th>
+            <th>Saved as</th>
+            <th>Status</th>
+            <th>Progress</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+    {% for d in downloads %}
+        <tr>
+            <td><code>{{ d.source_title }}</code></td>
+            <td><code>{{ d.final_name }}</code></td>
+            <td><span class="status status-{{ d.status }}">{{ d.status }}</span></td>
+            <td>
+                <div class="bar"><div class="fill" style="width: {{ d.pct }}%"></div></div>
+                <small>{{ d.bytes }} / {{ d.size_bytes }} B ({{ d.pct }}%)</small>
+            </td>
+            <td>
+                {% if d.status == "running" %}
+                <form action="/complete" method="post" style="display:inline">
+                    <input type="hidden" name="id" value="{{ d.id }}">
+                    <button type="submit">Mark done</button>
+                </form>
+                {% endif %}
+            </td>
+        </tr>
+    {% endfor %}
+    </tbody>
+</table>
+{% endif %}
+{% endblock %}
